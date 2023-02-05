@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { FC, useEffect } from 'react';
 import { useForm, SubmitHandler, FormProvider } from 'react-hook-form';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
@@ -9,7 +9,7 @@ import { defaultValues } from './constants';
 import { useAppDispatch } from '../../state/hooks';
 import { addTodo } from '../../state/slices/todoSlice';
 
-const Form = () => {
+const Form: FC = () => {
   const dispatch = useAppDispatch();
 
   const methods = useForm<TInput>({
@@ -40,49 +40,39 @@ const Form = () => {
       return 'At least 2 characters';
   };
 
-  const buttonSX = {
-    marginLeft: 1,
-    boxShadow: 'none',
-    textTransform: 'none',
-    fontSize: 18,
-
-    '&:hover': {
-      backgroundColor: '#00A300',
-      boxShadow: 'none',
-    },
-  };
-
   return (
-    <Box
-      maxWidth='sm'
-      sx={{
-        mt: 10,
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-      }}
-    >
-      <FormProvider {...methods}>
-        <Box
-          component='form'
-          noValidate
-          autoComplete='off'
-          onSubmit={handleSubmit(onSubmitHandler)}
+    <FormProvider {...methods}>
+      <Box
+        sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+        component='form'
+        noValidate
+        autoComplete='off'
+        onSubmit={handleSubmit(onSubmitHandler)}
+      >
+        <FormInput
+          {...register('task', { required: true, minLength: 2 })}
+          label='Your task'
+          placeholder='Write your checklist text here'
+          sx={{ width: 300 }}
+          InputLabelProps={{ shrink: true }}
+          helperText={handleErrors()}
+        />
+        <Button
+          type='submit'
+          variant='contained'
+          size='large'
+          sx={{
+            marginLeft: 2,
+            '&:hover': {
+              backgroundColor: '#00A300',
+              boxShadow: 'none',
+            },
+          }}
         >
-          <FormInput
-            {...register('task', { required: true, minLength: 2 })}
-            label='Your task'
-            placeholder='Write your checklist text here'
-            sx={{ width: 300 }}
-            InputLabelProps={{ shrink: true }}
-            helperText={handleErrors()}
-          />
-          <Button type='submit' variant='contained' size='large' sx={buttonSX}>
-            Add
-          </Button>
-        </Box>
-      </FormProvider>
-    </Box>
+          Add
+        </Button>
+      </Box>
+    </FormProvider>
   );
 };
 
